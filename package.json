@@ -1,0 +1,39 @@
+{
+  "name": "sreder",
+  "version": "1.0.0",
+  "description": "Opensource SR&ED process/time capture system",
+  "main": "src/index.js",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "cors": "^2.7.1",
+    "express": "^4.13.4",
+    "glob": "^7.0.5",
+    "goes-client": "latest",
+    "goes-install": "latest",
+    "nodeunit": "latest",
+    "on-response": "^1.0.1",
+    "uuid": "latest",
+    "zmq": "latest"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.11.4",
+    "babel-preset-es2015": "^6.13.2"
+  },
+  "scripts": {
+    "build": "babel src --out-dir dist",
+    "prestart": "npm run build",
+    "start": "node dist/app local",
+    "pretest": "npm run build",
+    "test": "nodeunit"
+  },
+  "keywords": [
+    "sr&ed",
+    "scientific",
+    "research",
+    "experimental",
+    "development"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "private": true
+}
