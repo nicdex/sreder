@@ -6,9 +6,11 @@ An opensource SR&ED process/time capture system
 
 ## Requirements
 
-* [nodejs](https://nodejs.org) v4.5+
+* [nodejs](https://nodejs.org) v4.x\*
 * [GoES](http://github.com/nicdex/goes) to store events.
     * Automatically installed in `.deps\goes` with `npm install`
+
+\* For some reason zmq on Node 6.x doesn't build on Windows and I haven't tested for Linux
 
 ## Requirements to compile native NodeJS modules (i.e. zmq).
 
@@ -19,7 +21,7 @@ An opensource SR&ED process/time capture system
 * npm config set msvs_version 2015 (run as your user)
 
 This step can be skipped if you can already compile native nodejs modules on your computer.
-windows-build-tools is a helper package that will install all requirements for Windows, see [node-gyp](https://www.npmjs.com/package/node-gyp) for details
+windows-build-tools is a helper package that will install all requirements for Windows, see [node-gyp](https://www.npmjs.com/package/node-gyp) and [windows-build-tools](https://www.npmjs.com/package/windows-build-tools) for details
 
 ### Linux
 

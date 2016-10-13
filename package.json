@@ -2,7 +2,7 @@
   "name": "sreder",
   "version": "1.0.0",
   "description": "Opensource SR&ED process/time capture system",
-  "main": "src/index.js",
+  "main": "dist/app.js",
   "dependencies": {
     "body-parser": "^1.15.0",
     "cors": "^2.7.1",
