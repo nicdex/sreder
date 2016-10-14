@@ -5,7 +5,7 @@ var ContributorIdentified = require('../events/ContributorIdentified');
 
 module.exports = class Hypothesis {
   constructor() {
-    this._hypothesisId = null;
+    this._id = null;
     this._contributorId = null;
     this._description = null;
     this._contributors = [];
@@ -43,6 +43,6 @@ module.exports = class Hypothesis {
     if (this._contributorId) {
       throw new Error('Contributor already added.'); 
     }
-    return new ContributorIdentified(this._hypothesisId, command.contributorId, command.name);
+    return new ContributorIdentified(this._id, command.contributorId, command.name);
   }
 };

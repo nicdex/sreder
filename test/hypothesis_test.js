@@ -18,6 +18,7 @@ module.exports = {
     hypothesis.hydrate(new HypothesisProposed("134564","the earth is flat."));
     var result = hypothesis.execute(new AddContributor("666666","Albert Einstein"));
     test.ok(result instanceof ContributorIdentified);
+    test.equal(result.hypothesisId, "134564");
     test.equal(result.name, "Albert Einstein");
     test.done();
   }
