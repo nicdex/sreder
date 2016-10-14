@@ -1,6 +1,6 @@
 module.exports = class HypothesisProposed {
   constructor(id, desc) {
     this.hypothesisId = id;
-    this.hypothesis = desc;
+    this.description = desc;
   }
-}
+};
