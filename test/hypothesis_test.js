@@ -1,4 +1,4 @@
-var Hypothesis = require('../dist/domain/Hypothesis'); // aggregate
+var Hypothesis = require('../dist/domain/Hypothesis');
 var ProposeHypothesis = require('../dist/commands/ProposeHypothesis');
 var HypothesisProposed = require('../dist/events/HypothesisProposed');
 var AddContributor = require('../dist/commands/AddContributor');

@@ -38,6 +38,10 @@ windows-build-tools is a helper package that will install all requirements for W
 
 `npm install`
 
+### Run the tests
+
+`npm test`
+
 ### Start the event store
 
 Windows: `start .deps\goes\bin\goes.exe`
