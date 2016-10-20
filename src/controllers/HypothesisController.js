@@ -7,15 +7,14 @@ export default class HypothesisController {
 
     function proposeHypothesis(req, res) {
       //TODO: validate req.body input
-      const command = new ProposeHypothesis(req.body);
-      command.hypthesisId = uuid.v4();
+      const command = new ProposeHypothesis(uuid.v4(), req.body.description);
       commandHandler(command.hypothesisId, new Hypothesis(), command)
           .then(() => {
             res.json(command);
           })
           .catch(err => {
-            logger.error(err);
-            res.status(500).json(err);
+            logger.error(err.stack);
+            res.status(500).json({message: err.message});
           });
     }
 

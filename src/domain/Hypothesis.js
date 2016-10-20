@@ -1,9 +1,9 @@
-var ProposeHypothesis = require('../commands/ProposeHypothesis');
-var HypothesisProposed = require('../events/HypothesisProposed');
-var AddContributor = require('../commands/AddContributor');
-var ContributorIdentified = require('../events/ContributorIdentified');
+import ProposeHypothesis from '../commands/ProposeHypothesis';
+import HypothesisProposed from '../events/HypothesisProposed';
+import AddContributor from '../commands/AddContributor';
+import ContributorIdentified from '../events/ContributorIdentified';
 
-module.exports = class Hypothesis {
+export default class Hypothesis {
   constructor() {
     this._id = null;
     this._contributorId = null;

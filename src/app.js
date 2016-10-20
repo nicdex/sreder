@@ -10,9 +10,8 @@ var cors = require('cors');
 var jsonParser = require('body-parser').json;
 var glob = require('glob');
 var onResponse = require('on-response');
+var esClient = require('eventstore-node');
 
-var createGoesClient = require('goes-client').client;
-var createGoesReader = require('goes-client').reader;
 var commandHandlerFactory = require('./services/commandHandler');
 var ReadRepository = require('./services/ReadRepository');
 
@@ -24,46 +23,48 @@ function wireUp(config) {
   app.use(cors());
   app.use(jsonParser());
 
-  const goesClient = createGoesClient(config.goesUrl, Logger);
-  registerEventTypes(goesClient);
-  const commandHandler = commandHandlerFactory(goesClient, Logger);
-  const goesReader = createGoesReader(config.goesStoragePath);
-  const readRepository = new ReadRepository(goesReader, Logger);
-  registerModels(readRepository);
+  const esConnection = esClient.createConnection({}, config.esEndPoint);
+  esConnection.connect();
+  esConnection.once('connected', (tcpEndPoint) => {
+    Logger.info('Connected to GES at', tcpEndPoint);
 
-  app.use(function (req, res, next) {
-    var start = Date.now();
-    onResponse(req, res, function (err, summary) {
-      Logger.access(
-        summary.request.remoteAddress,
-        '-',
-        req.user ? req.user.username : '-',
-        '-',
-        '"' + [summary.request.method, summary.request.url, 'HTTP/' + summary.request.httpVersion].join(' ') + '"',
-        '"' + summary.request.userAgent + '"',
-        '-',
-        res.statusCode,
-        summary.response.length || 0,
-        Date.now() - start);
+    const commandHandler = commandHandlerFactory(esConnection, Logger);
+    const readRepository = new ReadRepository(esConnection, Logger);
+    registerModels(readRepository);
+
+    app.use(function (req, res, next) {
+      var start = Date.now();
+      onResponse(req, res, function (err, summary) {
+        Logger.access(
+            summary.request.remoteAddress,
+            '-',
+            req.user ? req.user.username : '-',
+            '-',
+            '"' + [summary.request.method, summary.request.url, 'HTTP/' + summary.request.httpVersion].join(' ') + '"',
+            '"' + summary.request.userAgent + '"',
+            '-',
+            res.statusCode,
+            summary.response.length || 0,
+            Date.now() - start);
+      });
+      next();
     });
-    next();
-  });
 
-  app.use('/', express.static(path.join(__dirname, '..', 'web')));
+    app.use('/', express.static(path.join(__dirname, '..', 'web')));
 
-  const services = {
-    app: app,
-    goesClient: goesClient,
-    goesReader: goesReader,
-    readRepository: readRepository,
-    commandHandler: commandHandler,
-    logger: Logger
-  };
-  registerControllers(services);
+    const services = {
+      app: app,
+      esConnection: esConnection,
+      readRepository: readRepository,
+      commandHandler: commandHandler,
+      logger: Logger
+    };
+    registerControllers(services);
 
-  app.use(function (err, req, res, next) {
-    Logger.error(err.stack);
-    res.status(500).send({message: err.message, code: err.code || 'unknown'});
+    app.use(function (err, req, res, next) {
+      Logger.error(err.stack);
+      res.status(500).send({message: err.message, code: err.code || 'unknown'});
+    });
   });
 
   function listening() {
@@ -82,18 +83,6 @@ function wireUp(config) {
   } else {
     app.listen(config.httpPort, listening);
   }
-}
-
-function registerEventTypes(goesClient) {
-  goesClient.registerTypes.apply(goesClient,
-      glob.sync(path.join(__dirname, 'events', '*.js'))
-          .map(f => {
-            var module = require(f);
-            if (typeof module === 'object') {
-              return module.default;
-            }
-            return module;
-          }));
 }
 
 function registerModels(readRepository) {

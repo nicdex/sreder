@@ -1,6 +1,6 @@
-module.exports = class ProposeHypothesis {
-  constructor(id, desc) {
+export default class ProposeHypothesis {
+  constructor(id, description) {
     this.hypothesisId = id;
-    this.description = desc;
+    this.description = description;
   }
 };

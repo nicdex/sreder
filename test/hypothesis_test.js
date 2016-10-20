@@ -1,8 +1,8 @@
-var Hypothesis = require('../dist/domain/Hypothesis');
-var ProposeHypothesis = require('../dist/commands/ProposeHypothesis');
-var HypothesisProposed = require('../dist/events/HypothesisProposed');
-var AddContributor = require('../dist/commands/AddContributor');
-var ContributorIdentified = require('../dist/events/ContributorIdentified');
+var Hypothesis = require('../dist/domain/Hypothesis').default;
+var ProposeHypothesis = require('../dist/commands/ProposeHypothesis').default;
+var HypothesisProposed = require('../dist/events/HypothesisProposed').default;
+var AddContributor = require('../dist/commands/AddContributor').default;
+var ContributorIdentified = require('../dist/events/ContributorIdentified').default;
 
 module.exports = {
   'Test ProposeHypothesis': function (test) {

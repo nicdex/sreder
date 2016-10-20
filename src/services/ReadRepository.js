@@ -1,3 +1,5 @@
+var esClient = require('eventstore-node');
+
 function filter(rows, constraints) {
   if (!constraints) {
     return rows;
@@ -37,9 +39,40 @@ function DependencyProvider(dependencies, values) {
   };
 }
 
-function ReadRepository(goesReader, logger) {
+function ReadRepository(esConnection, logger) {
   var models = {};
-  var self = this;
+  var readStore = {};
+
+  var dependencyProvider = {
+    get: function (modelName, constraints) {
+      return filter(readStore[modelName], constraints);
+    }
+  };
+
+  esConnection.subscribeToAllFrom(null, true,
+    function (s, evData) {
+      logger.info('Processing event', evData.originalEvent.eventType);
+      try {
+        var eventData = {
+          typeId: evData.originalEvent.eventType,
+          event: evData.originalEvent.data.length ? JSON.parse(evData.originalEvent.data.toString()) : null,
+          metadata: evData.originalEvent.metadata.length ? JSON.parse(evData.originalEvent.metadata.toString()) : null
+        };
+        for (var k in models) {
+          readStore[k] = models[k].reducer.call(dependencyProvider, readStore[k], eventData);
+        }
+      } catch(e) {
+        logger.error('Error processing event', e.stack);
+      }
+    },
+    function () {
+      logger.info('Live processing started.');
+    },
+    function (c, r, e) {
+      logger.info('Subscription dropped.', c, r, e);
+    },
+    new esClient.UserCredentials('admin', 'changeit')
+  );
 
   this.define = function (modelName, model) {
     if (!model) {
@@ -50,82 +83,27 @@ function ReadRepository(goesReader, logger) {
     }
     logger.info('Defining model:', modelName);
     models[modelName] = model;
+    readStore[modelName] = [];
   };
 
-  function getAllFor(filters) {
-    return new Promise(function (resolve, reject) {
-      goesReader.getAllFor(filters, function (err, events) {
-        if (err) {
-          return reject(err);
-        }
-        resolve(events);
-      });
-    });
-  }
-
-  function build(modelName) {
-    var model = models[modelName];
-    if (!model) {
-      return Promise.reject(new Error(['Model "', modelName, '" is not defined.'].join('')));
-    }
-    var dependencies = model.dependencies || [];
-    logger.info('Building read model', modelName, model);
-    return Promise
-        .all(dependencies.map(function (dep) {
-          return self.findAll(dep);
-        }))
-        .then(function (args) {
-          return new DependencyProvider(dependencies, args);
-        })
-        .then(function (dependencyProvider) {
-          return getAllFor(model.filters)
-              .then(function (events) {
-                return events.reduce(model.reducer.bind(dependencyProvider), []);
-              });
-        });
-  }
-
   this.findOne = function (modelName, constraints, noThrowOnError) {
-    var start = Date.now();
-    return build(modelName)
-        .then(function (rows) {
+    return Promise.resolve(readStore[modelName])
+        .then(rows => {
           return filter(rows, constraints);
         })
-        .then(function (rows) {
-          if (noThrowOnError || rows.length === 1) {
-            return rows[0];
-          }
-          if (rows.length === 0) {
-            var error = new Error('No result found for: ' + modelName);
-            error.code = [modelName, 'no-result-found'].join('/');
-            throw error;
-          }
-          throw new Error('More than one result found for: ' + modelName);
-        })
-        .then(function (result) {
-          logger.info('findOne', modelName, JSON.stringify(constraints), 'took', Date.now()-start, 'ms');
-          return result;
+        .then(results => {
+          return results[0];
         });
   };
 
   this.findAll = function (modelName) {
-    var start = Date.now();
-    return build(modelName)
-      .then(function (result) {
-        logger.info('findAll', modelName, 'took', Date.now()-start, 'ms');
-        return result;
-      });
+    return Promise.resolve(readStore[modelName]);
   };
 
   this.findWhere = function (modelName, constraints) {
-    var start = Date.now();
-    return build(modelName)
-        .then(function (rows) {
+    return Promise.resolve(readStore[modelName])
+        .then(rows => {
           return filter(rows, constraints);
-        })
-        .then(function (result) {
-          logger.info('findWhere', modelName, JSON.stringify(constraints), 'took', Date.now()-start, 'ms');
-          return result;
         });
   };
 }

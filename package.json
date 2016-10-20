@@ -6,22 +6,21 @@
   "dependencies": {
     "body-parser": "^1.15.0",
     "cors": "^2.7.1",
+    "eventstore-node": "0.0.7",
     "express": "^4.13.4",
     "glob": "^7.0.5",
-    "goes-client": "latest",
-    "goes-install": "latest",
     "nodeunit": "latest",
     "on-response": "^1.0.1",
-    "uuid": "latest",
-    "zmq": "latest"
+    "uuid": "latest"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
     "babel-preset-es2015": "^6.13.2"
   },
   "scripts": {
+    "clean": "rm -rf dist",
     "build": "babel src --out-dir dist",
-    "prestart": "npm run build",
+    "prestart": "npm run clean && npm run build",
     "start": "node dist/app local",
     "pretest": "npm run build",
     "test": "nodeunit"
