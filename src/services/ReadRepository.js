@@ -49,14 +49,22 @@ function ReadRepository(esConnection, logger) {
     }
   };
 
+  function parseData(buf) {
+    try {
+      return JSON.parse(buf.toString());
+    } catch(e) {
+      return null;
+    }
+  }
+
   esConnection.subscribeToAllFrom(null, true,
     function (s, evData) {
       logger.info('Processing event', evData.originalEvent.eventType);
       try {
         var eventData = {
           typeId: evData.originalEvent.eventType,
-          event: evData.originalEvent.data.length ? JSON.parse(evData.originalEvent.data.toString()) : null,
-          metadata: evData.originalEvent.metadata.length ? JSON.parse(evData.originalEvent.metadata.toString()) : null
+          event: parseData(evData.originalEvent.data),
+          metadata: parseData(evData.originalEvent.metadata)
         };
         for (var k in models) {
           readStore[k] = models[k].reducer.call(dependencyProvider, readStore[k], eventData);
