@@ -26,7 +26,6 @@ export default class Hypothesis {
   }
 
   _onContributorIdentified(evt) {
-    this._id = evt.hypothesisId;
     this._contributors.push(evt.contributorId);
   }
 
@@ -41,16 +40,17 @@ export default class Hypothesis {
   }
 
   _propose(command) {
-    if (this._hypothesisId) {
+    if (this._id) {
       throw new Error('Hypothesis already exists.');
     }
     return new HypothesisProposed(command.hypothesisId, command.description);
   }
 
   _addContributor(command) {
-    if (this._contributorId) {
-      throw new Error('Contributor already added.'); 
-    }
+    // TODO: Test for duplicate contributors. Should be idempotent.
+    // if (this._contributorId) {
+    //   throw new Error('Contributor already added.'); 
+    // }
     return new ContributorIdentified(this._id, command.contributorId, command.name);
   }
 };
