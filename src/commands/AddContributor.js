@@ -1,6 +1,7 @@
 export default class AddContributor {
-  constructor(id, name) {
-    this.contributorId = id;
+  constructor(id, contributorId, name) {
+    this.hypothesisId = id;
+    this.contributorId = contributorId;
     this.name = name;
   }
 };

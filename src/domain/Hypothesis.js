@@ -14,12 +14,20 @@ export default class Hypothesis {
   hydrate(evt) {
     if (evt instanceof HypothesisProposed) {
       this._onHypothesisProposed(evt);
-    }
-  }
+    } 
+    if (evt instanceof ContributorIdentified) {
+      this._onContributorIdentified(evt);
+    } }
+  
 
   _onHypothesisProposed(evt) {
     this._id = evt.hypothesisId;
     this._description = evt.description;
+  }
+
+  _onContributorIdentified(evt) {
+    this._id = evt.hypothesisId;
+    this._contributors.push(evt.contributorId);
   }
 
   execute(command) {
