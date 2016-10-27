@@ -78,6 +78,6 @@ This is how far we got on https://www.meetup.com/DDD-CQRS-ES/events/233962161/. 
 - When we eventstormed the system we concluded that what makes it really useful is that it's able to receive (e.g.) TimesheetEntryRecorded events from external, already existing\
 time tracking systems so that SR & ED admins can look at them and attribute them to projects. We could build a read model for this: Whenever a TimeEntryRecorded by one
 of our project contributors occurs, update the read model so the entry can be seen by an admin who may decide that it represents a contribution to one or more hypotheses we 
-were trying to prove at the time and clicks buttons to issue an AddContributor commands.
+were trying to prove at the time and clicks buttons to issue (yet to be implemented) RecordTimeContributed commands.
 - We are missing commands to update or delete hypotheses. 
 - A UI would be nice. Usability is probably what would sell this product; learning and iterating on user experience early on seems important.
