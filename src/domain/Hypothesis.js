@@ -14,12 +14,23 @@ export default class Hypothesis {
   hydrate(evt) {
     if (evt instanceof HypothesisProposed) {
       this._onHypothesisProposed(evt);
-    }
+    } 
+    if (evt instanceof ContributorIdentified) {
+      console.log(evt)
+      this._onContributorIdentified(evt);
+    } 
   }
+  
 
   _onHypothesisProposed(evt) {
     this._id = evt.hypothesisId;
     this._description = evt.description;
+    this._contributors = [];
+  }
+
+  _onContributorIdentified(evt) {
+    console.log("PUSHING CONTRIBUTOR " + evt.contributorId);
+    this._contributors.push(evt.contributorId);
   }
 
   execute(command) {
@@ -33,16 +44,17 @@ export default class Hypothesis {
   }
 
   _propose(command) {
-    if (this._hypothesisId) {
+    if (this._id) {
       throw new Error('Hypothesis already exists.');
     }
     return new HypothesisProposed(command.hypothesisId, command.description);
   }
 
   _addContributor(command) {
-    if (this._contributorId) {
-      throw new Error('Contributor already added.'); 
-    }
-    return new ContributorIdentified(this._id, command.contributorId, command.name);
+    // TODO: Test for duplicate contributors. Should be idempotent.
+    // if (this._contributorId) {
+    //   throw new Error('Contributor already added.'); 
+    // }
+    return new ContributorIdentified(command.hypothesisId, command.contributorId, command.name);
   }
 };

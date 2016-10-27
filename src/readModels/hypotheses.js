@@ -9,7 +9,16 @@ export function reducer(hypotheses, eventData) {
     case 'HypothesisProposed':
       hypotheses.push({
         id: event.hypothesisId,
-        description: event.description
+        description: event.description,
+        contributors: []
+      });
+      break;
+    case 'ContributorIdentified':
+      const oneHypothesis = hypotheses.filter(hype => hype.id === event.hypothesisId );
+      console.log(event);
+      console.log(hypotheses);
+      oneHypothesis[0].contributors.push({
+        contributorId: event.contributorId
       });
       break;
   }
