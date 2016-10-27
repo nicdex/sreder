@@ -21,7 +21,7 @@
     "clean": "rm -rf dist",
     "build": "babel src --out-dir dist",
     "prestart": "npm run clean && npm run build",
-    "start": "node dist/app local",
+    "start": "babel-node src/app local",
     "pretest": "npm run build",
     "test": "nodeunit"
   },

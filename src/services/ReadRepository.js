@@ -66,7 +66,10 @@ function ReadRepository(esConnection, logger) {
           event: parseData(evData.originalEvent.data),
           metadata: parseData(evData.originalEvent.metadata)
         };
+        console.log("MOTELS");
+        console.log(models);
         for (var k in models) {
+          console.log(k);
           readStore[k] = models[k].reducer.call(dependencyProvider, readStore[k], eventData);
         }
       } catch(e) {

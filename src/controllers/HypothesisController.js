@@ -21,10 +21,6 @@ export default class HypothesisController {
     function addContributor(req, res) {
       const command = new AddContributor(req.body.hypothesisId, uuid.v4(), req.body.name);
 
-      //TODO: Hydrate Hypothesis.
-      console.log("HYPOTHESISCONTROLLER.ADDCONTRIBUTOR");
-      console.log(command);
-
       commandHandler(command.hypothesisId, new Hypothesis(), command)
           .then(() => {
             res.json(command);
