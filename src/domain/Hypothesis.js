@@ -16,6 +16,8 @@ export default class Hypothesis {
       this._onHypothesisProposed(evt);
     } 
     if (evt instanceof ContributorIdentified) {
+      console.log("HYDRATE");
+      console.log(evt)
       this._onContributorIdentified(evt);
     } }
   
@@ -51,6 +53,8 @@ export default class Hypothesis {
     // if (this._contributorId) {
     //   throw new Error('Contributor already added.'); 
     // }
+    console.log("HYPOTHESIS._ADDCONTRIBUTOR")
+    console.log(this)
     return new ContributorIdentified(this._id, command.contributorId, command.name);
   }
 };

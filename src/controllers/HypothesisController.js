@@ -7,7 +7,6 @@ export default class HypothesisController {
   constructor(app, readRepository, commandHandler, logger) {
 
     function proposeHypothesis(req, res) {
-      //TODO: validate req.body input
       const command = new ProposeHypothesis(uuid.v4(), req.body.description);
       commandHandler(command.hypothesisId, new Hypothesis(), command)
           .then(() => {
@@ -20,8 +19,12 @@ export default class HypothesisController {
     }
 
     function addContributor(req, res) {
-      //TODO: validate req.body input
       const command = new AddContributor(req.body.hypothesisId, uuid.v4(), req.body.name);
+
+      //TODO: Hydrate Hypothesis.
+      console.log("HYPOTHESISCONTROLLER.ADDCONTRIBUTOR");
+      console.log(command);
+
       commandHandler(command.hypothesisId, new Hypothesis(), command)
           .then(() => {
             res.json(command);

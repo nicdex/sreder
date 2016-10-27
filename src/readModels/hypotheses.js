@@ -14,8 +14,9 @@ export function reducer(hypotheses, eventData) {
       });
       break;
     case 'ContributorIdentified':
-      const oneHypothesis = hypotheses.filter(hype => 
-        hype.id === event.hypothesisId );
+      const oneHypothesis = hypotheses.filter(hype => hype.id === event.hypothesisId );
+      console.log(event);
+      console.log(hypotheses);
       oneHypothesis[0].contributors.push({
         contributorId: event.contributorId
       });
