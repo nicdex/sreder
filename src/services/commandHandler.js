@@ -11,8 +11,9 @@ module.exports = function commandHandlerFactory (esConnection, logger) {
     var start = Date.now();
     metadata = metadata || {};
     metadata.timestamp = start;
+    var streamName = aggregate.constructor.name + '-' + aggregateId;
 
-    return (create ? Promise.resolve([]) : esConnection.readStreamEventsForward(aggregateId, 0, 4096, true))
+    return (create ? Promise.resolve([]) : esConnection.readStreamEventsForward(streamName, 0, 4096, true))
         .then(function (readResult) {
           readResult.events
             .map(ev => JSON.parse(ev.originalEvent.data.toString()))
@@ -27,7 +28,7 @@ module.exports = function commandHandlerFactory (esConnection, logger) {
         })
         .then(function (data) {
           var event = esClient.createJsonEventData(uuid.v4(), data.event, metadata);
-          return esConnection.appendToStream(aggregateId, data.expectedVersion, [event]);
+          return esConnection.appendToStream(streamName, data.expectedVersion, [event]);
         })
         .then(function (result) {
           logger.info('Processing command', utils.getTypeName(command), JSON.stringify(command), "create="+create, 'took', Date.now()-start, 'ms');
