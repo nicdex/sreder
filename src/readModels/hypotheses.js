@@ -1,5 +1,5 @@
 export const filters = {
-  eventType: ['HypothesisProposed']
+  eventType: ['HypothesisProposed', 'ContributorIdentified']
 };
 
 export function reducer(hypotheses, eventData) {
@@ -9,8 +9,14 @@ export function reducer(hypotheses, eventData) {
     case 'HypothesisProposed':
       hypotheses.push({
         id: event.hypothesisId,
-        description: event.description
+        description: event.description,
+        contributors: []
       });
+      break;
+    case 'ContributorIdentified':
+      var hypothesis = hypotheses.filter(x => x.id === event.hypothesisId)[0];
+      if (hypothesis)
+        hypothesis.contributors.push(event.contributorId);
       break;
   }
   return hypotheses;

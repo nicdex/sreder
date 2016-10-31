@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import Hypothesis from '../domain/Hypothesis';
 import ProposeHypothesis from '../commands/ProposeHypothesis';
+import AddContributor from '../commands/AddContributor';
 
 export default class HypothesisController {
   constructor(app, readRepository, commandHandler, logger) {
@@ -19,6 +20,21 @@ export default class HypothesisController {
     }
 
     app.post('/api/v1/hypotheses/propose', proposeHypothesis);
+
+    function addContributor(req, res) {
+      //TODO: validate req.body input
+      const command = new AddContributor(req.body.hypothesisId, uuid.v4(), req.body.name);
+      commandHandler(command.hypothesisId, new Hypothesis(), command)
+          .then(() => {
+              res.json(command);
+          })
+          .catch(err => {
+              logger.error(err.stack);
+              res.status(500).json({message: err.message});
+          });
+    }
+
+    app.post('/api/v1/hypotheses/addcontributor', addContributor);
 
     function getAllHypotheses(req, res) {
       readRepository.findAll('hypotheses')
