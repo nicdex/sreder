@@ -13,15 +13,22 @@ export default class Hypothesis {
   hydrate(evt) {
     if (evt instanceof HypothesisProposed) {
       this._onHypothesisProposed(evt);
-    }
+    } 
     if (evt instanceof ContributorIdentified) {
       this._onContributorIdentified(evt);
     }
   }
+  
 
   _onHypothesisProposed(evt) {
     this._id = evt.hypothesisId;
     this._description = evt.description;
+    this._contributors = [];
+  }
+
+  _onContributorIdentified(evt) {
+    console.log("PUSHING CONTRIBUTOR " + evt.contributorId);
+    this._contributors.push(evt.contributorId);
   }
 
   _onContributorIdentified(evt) {
@@ -52,6 +59,6 @@ export default class Hypothesis {
     if (this._contributors.indexOf(command.contributorId) >= 0) {
       throw new Error('Contributor already added.'); 
     }
-    return new ContributorIdentified(this._id, command.contributorId, command.name);
+    return new ContributorIdentified(command.hypothesisId, command.contributorId, command.name);
   }
 };

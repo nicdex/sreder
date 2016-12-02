@@ -14,6 +14,14 @@ export function reducer(hypotheses, eventData) {
       });
       break;
     case 'ContributorIdentified':
+      const oneHypothesis = hypotheses.filter(hype => hype.id === event.hypothesisId );
+      console.log(event);
+      console.log(hypotheses);
+      oneHypothesis[0].contributors.push({
+        contributorId: event.contributorId
+      });
+      break;
+    case 'ContributorIdentified':
       var hypothesis = hypotheses.filter(x => x.id === event.hypothesisId)[0];
       if (hypothesis)
         hypothesis.contributors.push(event.contributorId);

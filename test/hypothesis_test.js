@@ -15,11 +15,11 @@ module.exports = {
   },
   'Test AddContributor': function (test) {
     var hypothesis = new Hypothesis();
-    hypothesis.hydrate(new HypothesisProposed("1345647","the earth is flat."));
-    var result = hypothesis.execute(new AddContributor("134564", "666666", "Albert Einstein"));
+    hypothesis.hydrate(new HypothesisProposed("hyp-1","the earth is flat."));
+    var result = hypothesis.execute(new AddContributor("hyp-1", "contrib-666666","Albert Einstein"));
     test.ok(result instanceof ContributorIdentified);
-    test.equal(result.hypothesisId, "1345647");
-    test.equal(result.contributorId, "666666");
+    test.equal(result.hypothesisId, "hyp-1");
+    test.equal(result.contributorId, "contrib-666666")
     test.equal(result.name, "Albert Einstein");
     test.done();
   }

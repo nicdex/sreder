@@ -7,7 +7,6 @@ export default class HypothesisController {
   constructor(app, readRepository, commandHandler, logger) {
 
     function proposeHypothesis(req, res) {
-      //TODO: validate req.body input
       const command = new ProposeHypothesis(uuid.v4(), req.body.description);
       commandHandler(command.hypothesisId, new Hypothesis(), command)
           .then(() => {
@@ -18,6 +17,19 @@ export default class HypothesisController {
             res.status(500).json({message: err.message});
           });
     }
+
+    function addContributor(req, res) {
+      const command = new AddContributor(req.body.hypothesisId, uuid.v4(), req.body.name);
+
+      commandHandler(command.hypothesisId, new Hypothesis(), command)
+          .then(() => {
+            res.json(command);
+          })
+          .catch(err => {
+            logger.error(err.stack);
+            res.status(500).json({message: err.message});
+          });
+    }    
 
     app.post('/api/v1/hypotheses/propose', proposeHypothesis);
 
@@ -36,6 +48,8 @@ export default class HypothesisController {
 
     app.post('/api/v1/hypotheses/addcontributor', addContributor);
 
+    app.post('/api/v1/hypotheses/addcontributor', addContributor);
+
     function getAllHypotheses(req, res) {
       readRepository.findAll('hypotheses')
           .then(results => {
@@ -46,7 +60,6 @@ export default class HypothesisController {
             res.status(500).json(err);
           });
     }
-
     app.get('/api/v1/hypotheses', getAllHypotheses);
   }
 }
