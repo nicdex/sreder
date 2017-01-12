@@ -8,8 +8,6 @@ An opensource SR&ED process/time capture system
 
 * [nodejs](https://nodejs.org) v6.x\*
 
-\* For some reason zmq on Node 6.x doesn't build on Windows and I haven't tested for Linux
-
 
 ## Getting Started
 
